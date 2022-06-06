@@ -5,7 +5,7 @@ https://docs.datadoghq.com/logs/guide/forwarder/
 
 
 ## <ins>What module does?</ins>
-```yaml
+```hcl
 1. Stores the provided datadog api key in secret manager.
 2. Creates role that allows datadog aws account to collect data.
 3. Creates policy that allows datadog account to access different resources.
@@ -15,16 +15,16 @@ https://docs.datadoghq.com/logs/guide/forwarder/
 # After that any1 on this account will be able to use lambda for logs collection
 # Lambda subscription example:
 
-# resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
-#   name            = "datadog_log_subscription_filter"
-#   log_group_name  = "bread-evgeny"
-#   destination_arn = "arn:aws:lambda:us-east-1:603106382807:function:datadog-forwarder"
-#   filter_pattern  = ""
-# }
+resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
+  name            = "datadog_log_subscription_filter"
+  log_group_name  = "bread-evgeny"
+  destination_arn = "arn:aws:lambda:us-east-1:603106382807:function:datadog-forwarder"
+  filter_pattern  = ""
+}
 ```
 ## <ins>Usage</ins>
 #### in datadog.tf file set the following :
-```yaml
+```hcl
 module "datadog" {
   source                      = "toluna-terraform/terraform-aws-datadog-integration"
   region                      = "us-east-1"
