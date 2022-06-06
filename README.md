@@ -25,11 +25,14 @@ https://docs.datadoghq.com/logs/guide/forwarder/
 ## <ins>Usage</ins>
 #### in datadog.tf file set the following :
 ```yaml
-  region = <type string>
-  dd_api_key = <type string>
-  dd_app_key = <type string>
-  dd_site = <type string>
-  log_collection_services = <type list>
+module "datadog" {
+  source                      = "toluna-terraform/terraform-aws-datadog-integration"
+  region                      = "us-east-1"
+  dd_api_key                  = data.aws_ssm_parameter.datadog_api_key.value
+  dd_app_key                  = data.aws_ssm_parameter.datadog_app_key.value
+  dd_site                     = "datadoghq.com"
+  log_collection_services     = ["lambda"]
+}
 ```
 - **region:** *aws region.*<br/><br/>
 - **dd_api_key:** *Datadog api key should be created by "Account builder" but now it is created manually.*<br>
