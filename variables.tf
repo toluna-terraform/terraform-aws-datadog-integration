@@ -7,20 +7,14 @@ variable "datadog_aws_account_id" {
 
 variable "datadog_role_name" {
   type        = string
-  description = ""
+  description = "Enable Datadog to collect metrics, tags, CloudWatch events, and other data necessary to monitor your AWS environment."
   default     = "DatadogAWSIntegrationRole"
 }
 
 variable "datadog_policy_name" {
   type        = string
-  description = ""
+  description = "The set of permissions necessary to use all the integrations for individual AWS services."
   default     = "DatadogAWSIntegrationPolicy"
-}
-
-variable "datadog_lambda_fowarder_name" {
-  type        = string
-  description = ""
-  default     = "datadog-forwarder"
 }
 
 variable "datadog_cloudformation_template" {
@@ -37,10 +31,10 @@ variable "dd_app_key" { type = string }
 variable "log_collection_services" { type = list }
 
 variable "app_name" {
-  description = "application name"
+  description = "Application name"
   type        = string
 }
 
 variable "loggroup_envs" {
-  description = "list of environment log groups"
+  description = "List of environment log groups"
 }

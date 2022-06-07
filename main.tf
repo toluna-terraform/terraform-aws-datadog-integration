@@ -13,12 +13,12 @@ resource "aws_secretsmanager_secret_version" "dd_api_key" {
 # https://github.com/DataDog/datadog-serverless-functions/tree/master/aws/logs_monitoring
 # https://docs.datadoghq.com/logs/guide/forwarder/#terraform
 resource "aws_cloudformation_stack" "datadog_forwarder" {
-  name         = var.datadog_lambda_fowarder_name
+  name         = "datadog-forwarder-${var.app_name}"
   capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM", "CAPABILITY_AUTO_EXPAND"]
   parameters   = {
     DdApiKeySecretArn   = aws_secretsmanager_secret.dd_api_key.arn,
     DdSite              = var.dd_site,
-    FunctionName        = var.datadog_lambda_fowarder_name
+    FunctionName        = "datadog-forwarder-${var.app_name}"
   }
   template_url = var.datadog_cloudformation_template
 }
@@ -74,7 +74,7 @@ resource "aws_iam_role_policy_attachment" "datadog-policy-attach" {
 # https://registry.terraform.io/providers/DataDog/datadog/latest/docs/resources/integration_aws_lambda_arn
 resource "datadog_integration_aws_lambda_arn" "main_collector" {
   account_id = data.aws_caller_identity.current.account_id
-  lambda_arn = "arn:aws:lambda:${var.region}:${data.aws_caller_identity.current.account_id}:function:${var.datadog_lambda_fowarder_name}"
+  lambda_arn = "arn:aws:lambda:${var.region}:${data.aws_caller_identity.current.account_id}:function:datadog-forwarder-${var.app_name}"
 }
 
 # Create a new Datadog - Amazon Web Services integration log collection.
@@ -89,5 +89,5 @@ resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filt
     name            = "${each.value.name}"
     log_group_name  = "${each.value.name}"
     filter_pattern  = ""
-    destination_arn = "arn:aws:lambda:${var.region}:${data.aws_caller_identity.current.account_id}:function:${var.datadog_lambda_fowarder_name}"
+    destination_arn = "arn:aws:lambda:${var.region}:${data.aws_caller_identity.current.account_id}:function:datadog-forwarder-${var.app_name}"
 }
