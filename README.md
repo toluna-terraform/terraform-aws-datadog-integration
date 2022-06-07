@@ -66,6 +66,16 @@ curl -X GET "https://api.datadoghq.com/api/v1/integration/aws/logs/services" \
 -H "DD-API-KEY: ${DD_API_KEY}" \
 -H "DD-APPLICATION-KEY: ${DD_APP_KEY}"
 ```
+
+# <ins>Important to know about Datadog</ins>
+## The Datadog agent is:<br>
+A lightweight software installed on applications hosts that helps push every log, event, trace, and metric produced by your applications and infrastructure using the Datadog APIs.<br>
+Must be integrated on infrastructure level for more info click [here](https://docs.datadoghq.com/integrations/ecs_fargate/?tab=fluentbitandfirelens).
+
+## The Datadog tracer is:<br>
+Datadog Application Performance Monitoring (APM or tracing) is used to collect traces from your backend application code.<br>
+Must be integrated on application level for more info click [here](https://docs.datadoghq.com/tracing/setup_overview/).
+
 # <ins>Very important to know</ins>
 ### Each AWS account MUST have a "aws_iam_account_alias" setup: (should be done by Account builder)
 ### "aws_iam_account_alias" is basically the account name. for example (bread-non-prod)

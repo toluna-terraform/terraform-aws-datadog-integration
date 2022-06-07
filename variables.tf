@@ -35,3 +35,12 @@ variable "dd_site" { type = string }
 variable "dd_api_key" { type = string }
 variable "dd_app_key" { type = string }
 variable "log_collection_services" { type = list }
+
+variable "app_name" {
+  description = "application name"
+  type        = string
+}
+
+variable "loggroup_envs" {
+  description = "list of environment log groups"
+}

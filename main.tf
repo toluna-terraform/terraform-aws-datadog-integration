@@ -83,3 +83,11 @@ resource "datadog_integration_aws_log_collection" "main" {
   account_id = data.aws_caller_identity.current.account_id
   services   = var.log_collection_services
 }
+
+resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
+  for_each = var.loggroup_envs
+    name            = "${each.value.name}"
+    log_group_name  = "${each.value.name}"
+    filter_pattern  = ""
+    destination_arn = "arn:aws:lambda:${var.region}:${data.aws_caller_identity.current.account_id}:function:${var.datadog_lambda_fowarder_name}"
+}
