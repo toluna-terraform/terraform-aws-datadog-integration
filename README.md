@@ -36,11 +36,14 @@ module "datadog" {
 ```
 - **region:** *aws region.*<br/><br/>
 - **dd_api_key:** *Datadog api key should be created by "Account builder" but now it is created manually.*<br>
-for example: "/<aws_iam_account_alias>/datadog/api-key" ("/buffet-non-prod/datadog/api-key")<br/><br/>
+for example: "/<aws_caller_identity>/datadog/api-key" ("/603106382807/datadog/api-key")<br/><br/>
 
 - **dd_app_key:** *Datadog app key should be created by "Account builder" but now it is created manually.*<br/>
-for example: "/<aws_iam_account_alias>/datadog/app-key" ("/buffet-non-prod/datadog/app-key")<br/><br/>
-
+for example: "/<aws_caller_identity>/datadog/app-key" ("/603106382807/datadog/app-key")<br/><br/>
+I've used the account ID instead of account name(alias) because account alias cannot be used here as they are globally unique across all AWS products,<br>
+meaning if it is already being used by someone else it wont be available for you to use.<br>
+AWS does not reserve the names per customer<br>
+because it's simply a sub domain for signin for example https://buffet-non-prod.signin.aws.amazon.com/console.
 
 - **dd_site:** *In our case it's datadoghq.com as we don't work yet in EU.<br>
 once we will work in EU [this link](https://docs.datadoghq.com/logs/guide/forwarder/#aws-privatelink-support) will be useful:*<br/><br/>
@@ -75,8 +78,3 @@ Must be integrated on infrastructure level for more info click [here](https://do
 ## The Datadog tracer is:<br>
 Datadog Application Performance Monitoring (APM or tracing) is used to collect traces from your backend application code.<br>
 Must be integrated on application level for more info click [here](https://docs.datadoghq.com/tracing/setup_overview/).
-
-# <ins>Very important to know</ins>
-### Each AWS account MUST have a "aws_iam_account_alias" setup: (should be done by Account builder)
-### "aws_iam_account_alias" is basically the account name. for example (bread-non-prod)
-### the alias will be used to create one api key and app key for whole account.
