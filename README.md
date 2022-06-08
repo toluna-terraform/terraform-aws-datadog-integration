@@ -17,8 +17,8 @@ https://docs.datadoghq.com/logs/guide/forwarder/
 
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
   name            = "datadog_log_subscription_filter"
-  log_group_name  = "bread-evgeny"
-  destination_arn = "arn:aws:lambda:us-east-1:603106382807:function:datadog-forwarder"
+  log_group_name  = "<your_log_group_name>"
+  destination_arn = "arn:aws:lambda:us-east-1:<account_id>:function:datadog-forwarder"
   filter_pattern  = ""
 }
 ```
@@ -36,10 +36,10 @@ module "datadog" {
 ```
 - **region:** *aws region.*<br/><br/>
 - **dd_api_key:** *Datadog api key should be created by "Account builder" but now it is created manually.*<br>
-for example: "/<aws_caller_identity>/datadog/api-key" ("/603106382807/datadog/api-key")<br/><br/>
+for example: "/<aws_caller_identity>/datadog/api-key" ("/<account_id>/datadog/api-key")<br/><br/>
 
 - **dd_app_key:** *Datadog app key should be created by "Account builder" but now it is created manually.*<br/>
-for example: "/<aws_caller_identity>/datadog/app-key" ("/603106382807/datadog/app-key")<br/><br/>
+for example: "/<aws_caller_identity>/datadog/app-key" ("/<account_id>/datadog/app-key")<br/><br/>
 I've used the account ID instead of account name(alias) because account alias cannot be used here as they are globally unique across all AWS products,<br>
 meaning if it is already being used by someone else it wont be available for you to use.<br>
 AWS does not reserve the names per customer<br>
