@@ -27,6 +27,11 @@ resource "aws_cloudformation_stack" "datadog_forwarder" {
     FunctionName        = "datadog-forwarder"
   }
   template_url = var.datadog_cloudformation_template
+  lifecycle {
+    ignore_changes = [
+      parameters["DdApiKey"]
+    ]
+  }
 }
 
 resource "aws_iam_role" "datadog-integration-role" {
