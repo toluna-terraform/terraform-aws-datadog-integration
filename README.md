@@ -6,15 +6,15 @@ https://docs.datadoghq.com/logs/guide/forwarder/
 
 ## <ins>What module does?</ins>
 ```hcl
-1. Stores the provided datadog api key in secret manager.
-2. Creates role that allows datadog aws account to collect data.
-3. Creates policy that allows datadog account to access different resources.
-4. Creates integration between the AWS account and Datadog portal.
-5. Creates official datadog cloudformation stack that creates a lambda which can forward logs to datadog portal.
+1. Creates role that allows datadog aws account to collect data.
+2. Creates policy that allows datadog account to access different resources.
+3. Creates integration between the AWS account and Datadog portal.
+4. Creates official datadog cloudformation stack that creates a lambda which can forward logs to datadog portal.
+5. Creates a log subscription for each loggroup.
+```
 
-# After that any1 on this account will be able to use lambda for logs collection
-# Lambda subscription example:
-
+# Manual Lambda subscription example:
+```hcl
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
   name            = "datadog_log_subscription_filter"
   log_group_name  = "<your_log_group_name>"
@@ -26,12 +26,15 @@ resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filt
 #### in datadog.tf file set the following :
 ```hcl
 module "datadog" {
-  source                      = "toluna-terraform/terraform-aws-datadog-integration"
+  source                      = "toluna-terraform/datadog-integration/aws"
   region                      = "us-east-1"
+  app_name                    = local.app_name
+  loggroup_envs               = local.loggroup_envs
   dd_api_key                  = data.aws_ssm_parameter.datadog_api_key.value
   dd_app_key                  = data.aws_ssm_parameter.datadog_app_key.value
   dd_site                     = "datadoghq.com"
   log_collection_services     = ["lambda"]
+  multiple_shared_layers      = false
 }
 ```
 - **region:** *aws region.*<br/><br/>
@@ -48,10 +51,14 @@ because it's simply a sub domain for signin for example https://buffet-non-prod.
 - **dd_site:** *In our case it's datadoghq.com as we don't work yet in EU.<br>
 once we will work in EU [this link](https://docs.datadoghq.com/logs/guide/forwarder/#aws-privatelink-support) will be useful:*<br/><br/>
 
+- **multiple_shared_layers:**  Prevents creation of already exist objects like api keys/roles/policies etc.<br>
+Value TRUE may only be used for accounts with multiple shared layers<br>
+for example: Buffet-Non-Prod
+
 - **log_collection_services:** *A list of services to collect logs from.<br>
 See [the api docs](https://docs.datadoghq.com/api/latest/aws-logs-integration/#get-list-of-aws-log-ready-services) for more details on which services are supported.*<br/><br/>
 
-*When this README file was created supported logs were:*<br>
+*When this README file was created supported log collections were:*<br>
 ```
 [{"id":"apigw-access-logs","label":"API Gateway Access Logs"},
 {"id":"apigw-execution-logs","label":"API Gateway Execution Logs"},
