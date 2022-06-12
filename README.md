@@ -34,7 +34,6 @@ module "datadog" {
   dd_app_key                  = data.aws_ssm_parameter.datadog_app_key.value
   dd_site                     = "datadoghq.com"
   log_collection_services     = ["lambda"]
-  multiple_shared_layers      = false
 }
 ```
 - **region:** *aws region.*<br/><br/>
@@ -50,10 +49,6 @@ because it's simply a sub domain for signin for example https://buffet-non-prod.
 
 - **dd_site:** *In our case it's datadoghq.com as we don't work yet in EU.<br>
 once we will work in EU [this link](https://docs.datadoghq.com/logs/guide/forwarder/#aws-privatelink-support) will be useful:*<br/><br/>
-
-- **multiple_shared_layers:**  Prevents creation of already exist objects like api keys/roles/policies etc.<br>
-Value TRUE may only be used for accounts with multiple shared layers<br>
-for example: Buffet-Non-Prod
 
 - **log_collection_services:** *A list of services to collect logs from.<br>
 See [the api docs](https://docs.datadoghq.com/api/latest/aws-logs-integration/#get-list-of-aws-log-ready-services) for more details on which services are supported.*<br/><br/>
