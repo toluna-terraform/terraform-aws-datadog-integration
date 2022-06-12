@@ -38,9 +38,3 @@ variable "app_name" {
 variable "loggroup_envs" {
   description = "List of environment log groups"
 }
-
-variable "multiple_shared_layers" {
-  description = "Prevents creation of already exist objects like api keys/roles/policies etc."
-  type        = bool
-  default     = false
-}
