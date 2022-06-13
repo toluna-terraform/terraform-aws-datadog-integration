@@ -13,15 +13,6 @@ https://docs.datadoghq.com/logs/guide/forwarder/
 5. Creates a log subscription for each loggroup.
 ```
 
-# Manual Lambda subscription example:
-```hcl
-resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
-  name            = "datadog_log_subscription_filter"
-  log_group_name  = "<your_log_group_name>"
-  destination_arn = "arn:aws:lambda:us-east-1:<account_id>:function:datadog-forwarder"
-  filter_pattern  = ""
-}
-```
 ## <ins>Usage</ins>
 #### in datadog.tf file set the following :
 ```hcl
@@ -84,6 +75,16 @@ But the second product doesn't know about that because he have separed tf.state 
 In case of multi-product accounts like *( Buffet-non-prod or Guilds )*<br>
 You have to use datadog integration module only in one product.<br>
 The rest will just subscribe to datadog-forwarder lambda in order to send logs.<br></br>
+
+# Manual Lambda subscription example:
+```hcl
+resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
+  name            = "datadog_log_subscription_filter"
+  log_group_name  = "<your_log_group_name>"
+  destination_arn = "arn:aws:lambda:us-east-1:<account_id>:function:datadog-forwarder"
+  filter_pattern  = ""
+}
+```
 
 # <ins>Important to know about Datadog</ins>
 ## The Datadog agent is:<br>
