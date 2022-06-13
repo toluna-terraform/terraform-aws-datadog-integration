@@ -45,7 +45,7 @@ resource "aws_iam_role" "datadog-integration-role" {
       "Action": "sts:AssumeRole",
       "Condition": {
         "StringEquals": {
-          "sts:ExternalId": "${datadog_integration_aws.integration[count.index].external_id}"
+          "sts:ExternalId": "${datadog_integration_aws.integration.external_id}"
         }
       }
     }
@@ -53,6 +53,7 @@ resource "aws_iam_role" "datadog-integration-role" {
 }
 EOF
 }
+
 
 resource "aws_iam_policy" "datadog-integration-policy" {
   name        = var.datadog_policy_name
@@ -62,8 +63,8 @@ resource "aws_iam_policy" "datadog-integration-policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "datadog-policy-attach" {
-  role       = aws_iam_role.datadog-integration-role[count.index].name
-  policy_arn = aws_iam_policy.datadog-integration-policy[count.index].arn
+  role       = aws_iam_role.datadog-integration-role.name
+  policy_arn = aws_iam_policy.datadog-integration-policy.arn
 }
 
 # Create a new Datadog - Amazon Web Services integration
@@ -94,6 +95,7 @@ resource "datadog_integration_aws_log_collection" "main" {
   account_id = data.aws_caller_identity.current.account_id
   services   = var.log_collection_services
 }
+
 # Subscribe to datadog-forwarder.
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
   for_each = var.loggroup_envs

@@ -5,7 +5,7 @@ https://docs.datadoghq.com/logs/guide/forwarder/
 
 
 ## <ins>What module does?</ins>
-```hcl
+```
 1. Creates role that allows datadog aws account to collect data.
 2. Creates policy that allows datadog account to access different resources.
 3. Creates integration between the AWS account and Datadog portal.
@@ -54,7 +54,7 @@ once we will work in EU [this link](https://docs.datadoghq.com/logs/guide/forwar
 See [the api docs](https://docs.datadoghq.com/api/latest/aws-logs-integration/#get-list-of-aws-log-ready-services) for more details on which services are supported.*<br/><br/>
 
 *When this README file was created supported log collections were:*<br>
-```
+```json
 [{"id":"apigw-access-logs","label":"API Gateway Access Logs"},
 {"id":"apigw-execution-logs","label":"API Gateway Execution Logs"},
 {"id":"elbv2","label":"Application ELB Access Logs"},
@@ -71,6 +71,19 @@ curl -X GET "https://api.datadoghq.com/api/v1/integration/aws/logs/services" \
 -H "DD-API-KEY: ${DD_API_KEY}" \
 -H "DD-APPLICATION-KEY: ${DD_APP_KEY}"
 ```
+
+# <ins>How to use this module in multi-product accounts</ins>
+Important to understand that this module creates objects *( Integration / Datadog-forwarder lambda / Role / Policy )* **on account level**.<br>
+When this module will be used for the first time the objects will appear only in tf.state of the product which apply ran from.<br>
+Which means that if this module will be used from other product **under the same account** there will be an error *(resource already exist)*<br></br>
+### **I glad you've asked WTF?!**<br></br>
+Because the objects were created at the first apply and registered in the tf.state of the first product.<br>
+But the second product doesn't know about that because he have separed tf.state file and he will try to create them and fail *(as they are already exist)*.<br>
+
+### **Conclusion:**
+In case of multi-product accounts like *( Buffet-non-prod or Guilds )*<br>
+You have to use datadog integration module only in one product.<br>
+The rest will just subscribe to datadog-forwarder lambda in order to send logs.<br></br>
 
 # <ins>Important to know about Datadog</ins>
 ## The Datadog agent is:<br>
