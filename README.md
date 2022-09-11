@@ -14,7 +14,7 @@ https://docs.datadoghq.com/logs/guide/forwarder/
 ```
 
 ## <ins>Usage</ins>
-#### in datadog.tf file set the following :
+#### Create a datadog.tf file in terraform/shared and set the following :
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
@@ -27,6 +27,17 @@ module "datadog" {
   log_collection_services     = ["lambda"]
 }
 ```
+#### After that add the following lines into data.tf in terraform/shared.
+```hcl
+data "aws_ssm_parameter" "datadog_api_key" {
+    name = "/${data.aws_caller_identity.current.account_id}/datadog/api-key"
+}
+
+data "aws_ssm_parameter" "datadog_app_key" {
+    name = "/${data.aws_caller_identity.current.account_id}/datadog/app-key"
+}
+```
+#### Now you can apply on shared layer.
 - **region:** *aws region.*<br/><br/>
 - **dd_api_key:** *Datadog api key should be created by "Account builder" but now it is created manually.*<br>
 for example: "/<aws_caller_identity>/datadog/api-key" ("/<account_id>/datadog/api-key")<br/><br/>
