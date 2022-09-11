@@ -75,14 +75,6 @@ curl -X GET "https://api.datadoghq.com/api/v1/integration/aws/logs/services" \
 -H "DD-APPLICATION-KEY: ${DD_APP_KEY}"
 ```
 
-# <ins>How to use this module in multi-product accounts</ins>
-Important to understand that this module creates objects *( Integration / Datadog-forwarder lambda / Role / Policy )* **on account level**.<br>
-When this module will be used for the first time the objects will appear only in tf.state of the product which apply ran from.<br>
-Which means that if this module will be used from other product **under the same account** there will be an error *(resource already exist)*<br></br>
-### **I glad you've asked WTF?!**<br></br>
-Because the objects were created at the first apply and registered in the tf.state of the first product.<br>
-But the second product doesn't know about that because he have separed tf.state file and he will try to create them and fail *(as they are already exist)*.<br>
-
 ### **Conclusion:**
 In case of multi-product accounts like *( Buffet-non-prod or Guilds )*<br>
 You have to use datadog integration module only in one product.<br>
