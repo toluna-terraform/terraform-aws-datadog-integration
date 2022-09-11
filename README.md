@@ -38,6 +38,7 @@ data "aws_ssm_parameter" "datadog_app_key" {
 }
 ```
 #### Now you can apply on shared layer.
+## <ins>Flags</ins>
 - **region:** *aws region.*<br/><br/>
 - **dd_api_key:** *Datadog api key should be created by "Account builder" but now it is created manually.*<br>
 for example: "/<aws_caller_identity>/datadog/api-key" ("/<account_id>/datadog/api-key")<br/><br/>
