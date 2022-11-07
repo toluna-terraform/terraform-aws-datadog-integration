@@ -5,6 +5,12 @@ variable "datadog_aws_account_id" {
   default     = "464622532012"
 }
 
+variable "datadog_forwarder_function_name" {
+  type        = string
+  description = "Datadog forwarder lambda function name"
+  default     = "datadog-forwarder"
+}
+
 variable "datadog_role_name" {
   type        = string
   description = "Enable Datadog to collect metrics, tags, CloudWatch events, and other data necessary to monitor your AWS environment."
@@ -24,15 +30,16 @@ variable "datadog_cloudformation_template" {
 }
 
 // Shared variables.
-variable "region" { type = string }
-variable "dd_site" { type = string }
 variable "dd_api_key" { type = string }
 variable "dd_app_key" { type = string }
-variable "log_collection_services" { type = list }
+variable "dd_site" {
+  default = "datadoghq.com"
+  type    = string 
+}
 
-variable "app_name" {
-  description = "Application name"
-  type        = string
+variable "log_collection_services" {
+  type    = list
+  default = ["lambda"]
 }
 
 variable "loggroup_envs" {
