@@ -6,9 +6,9 @@ Terraform module which creates Datadog integration on AWS.
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
-  loggroup_envs               = <list of log groups for subscription>
-  dd_api_key                  = <datadog api key>
-  dd_app_key                  = <datadog app key>
+  loggroup_envs               = [<list of strings>]
+  dd_api_key                  = <string>
+  dd_app_key                  = <string>
 }
 ```
 
@@ -30,9 +30,9 @@ in order to change the default datadog site:
 module "datadog" {
   dd_site                     = "<string>"
   source                      = "toluna-terraform/datadog-integration/aws"
-  loggroup_envs               = <list of log groups for subscription>
-  dd_api_key                  = <datadog api key>
-  dd_app_key                  = <datadog app key>
+  loggroup_envs               = [<list of strings>]
+  dd_api_key                  = <string>
+  dd_app_key                  = <string>
 }
 ```
 ## Datadog log collection services.
@@ -42,7 +42,7 @@ In order to change the default log collection services:
 module "datadog" {
   log_collection_services     = [<list of strings>]
   source                      = "toluna-terraform/datadog-integration/aws"
-  loggroup_envs               = <list of strings>
+  loggroup_envs               = [<list of strings>]
   dd_api_key                  = <string>
   dd_app_key                  = <string>
 }
@@ -108,3 +108,7 @@ No modules.
 ## Outputs
 
 No outputs.
+
+## Authors
+
+Module is maintained by [Anton Babenko](https://github.com/evgenygigi).
