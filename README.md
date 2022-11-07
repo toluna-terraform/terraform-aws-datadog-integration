@@ -111,4 +111,4 @@ No outputs.
 
 ## Authors
 
-Module is maintained by [Anton Babenko](https://github.com/evgenygigi).
+Module is maintained by [Evgeny Gigi](https://github.com/evgenygigi).
