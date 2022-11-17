@@ -33,13 +33,25 @@ variable "datadog_cloudformation_template" {
 variable "dd_api_key" { type = string }
 variable "dd_app_key" { type = string }
 variable "dd_site" {
-  default = "datadoghq.com"
-  type    = string 
+  default     = "datadoghq.com"
+  type        = string 
+}
+
+variable "dd_tags" {
+  default     = ""
+  type        = string
+  description = "Add custom tags to forwarded logs, comma-delimited string, no trailing comma, e.g., env:prod,stack:classic"
+}
+
+variable "exclude_logs_pattern" {
+  default     = "\"(START|END|REPORT) RequestId:\\s"
+  type        = string
+  description = "This pattern will exclude lambda execution report only ERROR report will be forwarded"
 }
 
 variable "log_collection_services" {
-  type    = list
-  default = ["lambda"]
+  type        = list
+  default     = []
 }
 
 variable "loggroup_envs" {

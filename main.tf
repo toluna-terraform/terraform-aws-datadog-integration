@@ -20,8 +20,10 @@ resource "aws_cloudformation_stack" "datadog_forwarder" {
     # Keeping the SecretManager option commented in case we will use it in the future.
     # DdApiKeySecretArn   = aws_secretsmanager_secret.dd_api_key.arn,
     DdSite              = var.dd_site,
+    DdTags              = var.dd_tags,
     DdApiKey            = var.dd_api_key
     FunctionName        = var.datadog_forwarder_function_name
+    ExcludeAtMatch      = var.exclude_logs_pattern
     }
     template_url = var.datadog_cloudformation_template
     lifecycle {

@@ -35,6 +35,21 @@ module "datadog" {
   dd_app_key                  = <string>
 }
 ```
+## Datadog tags.
+By default `dd_tags` is empty<br>
+in order to change the default datadog tags:
+```hcl
+module "datadog" {
+  dd_site                     = "<string>"
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_tags                     = <string>
+  dd_api_key                  = <string>
+  dd_app_key                  = <string>
+}
+```
+Add custom tags to forwarded logs,
+comma-delimited string, no trailing comma, e.g., env:prod,stack:classic
+
 ## Datadog log collection services.
 By default `log_collection_services` is `["lambda"]`<br>
 In order to change the default log collection services:
