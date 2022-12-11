@@ -13,13 +13,12 @@ module "datadog" {
 
 ## <ins>What module does?</ins>
 By default this module will provision:
-```
 1. Role that allows datadog aws account to collect data.
 2. Policy that allows datadog account to access different resources.
 3. Integration between the AWS account and Datadog portal (by default collects logs from lambda functions).
 4. Official datadog cloudformation stack that creates a lambda (by default pointed to datadoghq.com)
     which can forward logs to datadog portal.
-```
+
 ## AWS Regions.
 The regions of your AWS account.<br>
 By default `aws_regions` is `["us-east-1"]`.<br>
