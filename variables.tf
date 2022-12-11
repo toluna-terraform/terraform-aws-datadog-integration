@@ -50,6 +50,18 @@ variable "dd_tags" {
   description = "Add custom tags to forwarded logs, comma-delimited string, no trailing comma, e.g., env:prod,stack:classic"
 }
 
+variable "metrics_collection_enabled" {
+  type        = string
+  default     = "true"
+  description = "Datadog collects metrics for this AWS account."
+}
+
+variable "resource_collection_enabled" {
+  type        = string
+  default     = "true"
+  description = "Datadog collects a standard set of resources from your AWS account."
+}
+
 variable "exclude_logs_pattern" {
   type        = string
   default     = "\"(START|END|REPORT) RequestId:\\s"
@@ -63,7 +75,8 @@ variable "log_collection_services" {
 }
 
 variable "cloudwatch_log_groups" {
-  type = set(string)
+  type = map(any)
+  default = {}
   description = "List of cloudwatch log groups."
 }
 

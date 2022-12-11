@@ -76,8 +76,8 @@ resource "datadog_integration_aws" "integration" {
   account_id                       = data.aws_caller_identity.current.account_id
   role_name                        = var.datadog_role_name
   excluded_regions                 = setsubtract(var.excluded_aws_regions, var.aws_regions)
-  metrics_collection_enabled       = "true"
-  resource_collection_enabled      = "true"
+  metrics_collection_enabled       = var.metrics_collection_enabled
+  resource_collection_enabled      = var.resource_collection_enabled
   account_specific_namespace_rules = {}
 }
 
@@ -96,23 +96,11 @@ resource "datadog_integration_aws_log_collection" "main" {
   depends_on = [datadog_integration_aws_lambda_arn.main_collector]
 }
 
-# # Subscribe to datadog-forwarder.
-# resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
-#   name            = "${each.value.name}"
-#   # for_each        = var.cloudwatch_log_groups == null ? toset([]) : var.cloudwatch_log_groups
-#   for_each        = var.cloudwatch_log_groups
-#   filter_pattern  = ""
-#   log_group_name  = "${each.value.name}"
-#   destination_arn = "${aws_cloudformation_stack.datadog_forwarder.outputs.DatadogForwarderArn}"
-# }
-
-
 # Subscribe to datadog-forwarder.
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
-  name            = each.value
-  # for_each        = var.cloudwatch_log_groups == null ? toset([]) : var.cloudwatch_log_groups
+  name            = "${each.value.name}"
   for_each        = var.cloudwatch_log_groups
   filter_pattern  = ""
-  log_group_name  = each.value
+  log_group_name  = "${each.value.name}"
   destination_arn = "${aws_cloudformation_stack.datadog_forwarder.outputs.DatadogForwarderArn}"
 }
