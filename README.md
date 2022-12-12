@@ -1,64 +1,99 @@
-# Datadog integration module.
-Official Datadog documentation was used for this module creation:<br>
-https://registry.terraform.io/providers/DataDog/datadog/latest/docs/resources/integration_aws<br>
-https://docs.datadoghq.com/logs/guide/forwarder/
+# AWS Datadog integration module.
 
-
-## <ins>What module does?</ins>
-```
-1. Creates role that allows datadog aws account to collect data.
-2. Creates policy that allows datadog account to access different resources.
-3. Creates integration between the AWS account and Datadog portal.
-4. Creates official datadog cloudformation stack that creates a lambda which can forward logs to datadog portal.
-5. Creates a log subscription for each loggroup.
-```
+Terraform module which creates Datadog integration on AWS.
 
 ## <ins>Usage</ins>
-#### Create a datadog.tf file in terraform/shared and set the following :
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
-  region                      = "us-east-1"
-  app_name                    = local.app_name
-  loggroup_envs               = local.loggroup_envs
-  dd_api_key                  = data.aws_ssm_parameter.datadog_api_key.value
-  dd_app_key                  = data.aws_ssm_parameter.datadog_app_key.value
-  dd_site                     = "datadoghq.com"
-  log_collection_services     = ["lambda"]
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
 }
 ```
-#### After that add the following lines into data.tf in terraform/shared.
+
+## <ins>What module does?<ins>
+By default this module will provision:
+1. Role that allows datadog aws account to collect data.
+2. Policy that allows datadog account to access different resources.
+3. Integration between the AWS account and Datadog portal (by default collects logs from lambda functions).
+4. Official datadog cloudformation stack that creates a lambda (by default pointed to datadoghq.com)
+    which can forward logs to datadog portal.
+
+## <ins>AWS Regions<ins>.
+The regions of your AWS account.<br>
+By default `aws_regions` is `["us-east-1"]`.<br>
+All other regions are excluded by default.<br>
+in order to change the default add an attribute `aws_regions` with desired value.<br>
+You can find a list of all excluded regions down below in README.md.<br>
 ```hcl
-data "aws_ssm_parameter" "datadog_api_key" {
-    name = "/${data.aws_caller_identity.current.account_id}/datadog/api-key"
-}
-
-data "aws_ssm_parameter" "datadog_app_key" {
-    name = "/${data.aws_caller_identity.current.account_id}/datadog/app-key"
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  aws_regions                 = ["<list of strings>"]
 }
 ```
-#### Now you can apply on shared layer.
-## <ins>Flags</ins>
-- **region:** *aws region.*<br/><br/>
-- **dd_api_key:** *Datadog api key should be created by "Account builder" but now it is created manually.*<br>
-for example: "/<aws_caller_identity>/datadog/api-key" ("/<account_id>/datadog/api-key")<br/><br/>
+## <ins>Log groups.</ins>
+Log groups you want to be subscribed to datadog forwarder.<br>
+By default `cloudwatch_log_groups` is `{}`.<br>
+in order to change the default add an attribute `cloudwatch_log_groups` with desired value.<br>
+The value should be a map of maps where each is identified by a string label and have a key `name` with the value of a log group name.<br>
+```hcl
+{log_group1={name="/aws/lambda/log_group1"},log_group2={name="/aws/ecs/log_group2"}}
+```
+Please see example in `examples/datadog-integration-with-log-groups` folder.<br>
+```hcl
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  cloudwatch_log_groups       = {{map of maps}}
+}
+```
+## <ins>Datadog site.</ins>
+Datadog Site to send data to.<br>
+By default `dd_site` is `"datadoghq.com"`.<br>
+in order to change the default datadog site add an attribute `dd_site` with desired value.<br>
+```hcl
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  dd_site                     = "<string>"
+}
+```
+You can find [here](https://docs.datadoghq.com/getting_started/site/) a list of datadog sites.
+## <ins>Datadog tags.</ins>
+Add custom tags to forwarded logs, comma-delimited string, no trailing comma, e.g., `"env:prod,stack:classic"`<br>
+By default `dd_tags` is empty<br>
+in order to change the default datadog tags add an attribute `dd_tags` with desired value.<br>
+```hcl
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  dd_tags                     = "<string>"
+}
+```
+Add custom tags to forwarded logs,<br>
+comma-delimited string,<br>
+no trailing comma,<br>
+e.g., env:prod,stack:classic
 
-- **dd_app_key:** *Datadog app key should be created by "Account builder" but now it is created manually.*<br/>
-for example: "/<aws_caller_identity>/datadog/app-key" ("/<account_id>/datadog/app-key")<br/><br/>
-I've used the account ID instead of account name(alias) because account alias cannot be used here as they are globally unique across all AWS products,<br>
-meaning if it is already being used by someone else it wont be available for you to use.<br>
-AWS does not reserve the names per customer<br>
-because it's simply a sub domain for signin for example https://buffet-non-prod.signin.aws.amazon.com/console.
-
-- **dd_site:** *In our case it's datadoghq.com as we don't work yet in EU.<br>
-once we will work in EU [this link](https://docs.datadoghq.com/logs/guide/forwarder/#aws-privatelink-support) will be useful:*<br/><br/>
-
-- **log_collection_services:** *A list of services to collect logs from.<br>
-See [the api docs](https://docs.datadoghq.com/api/latest/aws-logs-integration/#get-list-of-aws-log-ready-services) for more details on which services are supported.*<br/><br/>
-
-*When this README file was created supported log collections were:*<br>
-```json
-[{"id":"apigw-access-logs","label":"API Gateway Access Logs"},
+## <ins>Datadog log collection services.</ins>
+A list of services which Datadog will automatically collect logs from.<br>
+By default `log_collection_services` is empty<br>
+In order to change the default log collection services add an attribute `log_collection_services` with desired value.<br>
+```hcl
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  log_collection_services     = ["<list of strings>"]
+}
+```
+A list of services to collect logs from :<br>
+```json[{"id":"apigw-access-logs","label":"API Gateway Access Logs"},
 {"id":"apigw-execution-logs","label":"API Gateway Execution Logs"},
 {"id":"elbv2","label":"Application ELB Access Logs"},
 {"id":"elb","label":"Classic ELB Access Logs"},
@@ -67,34 +102,113 @@ See [the api docs](https://docs.datadoghq.com/api/latest/aws-logs-integration/#g
 {"id":"redshift","label":"Redshift Logs"},
 {"id":"s3","label":"S3 Access Logs"}]
 ```
-Also you can check it by running the following command:<br>
+* You can also see the supported services by running the following command:<br>
 ```
 curl -X GET "https://api.datadoghq.com/api/v1/integration/aws/logs/services" \
 -H "Content-Type: application/json" \
 -H "DD-API-KEY: ${DD_API_KEY}" \
 -H "DD-APPLICATION-KEY: ${DD_APP_KEY}"
 ```
-
-### **Conclusion:**
-In case of multi-product accounts like *( Buffet-non-prod or Guilds )*<br>
-You have to use datadog integration module only in one product.<br>
-The rest will just subscribe to datadog-forwarder lambda in order to send logs.<br></br>
-
-# Manual Lambda subscription example:
+## <ins>Datadog metrics collection.</ins>
+Datadog collects metrics for this AWS account.<br>
+By default `metrics_collection_enabled` is `"true"`.<br>
+In order to change the default `metrics_collection_enabled` add an attribute `metrics_collection_enabled` with desired value.<br>
 ```hcl
-resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
-  name            = "datadog_log_subscription_filter"
-  log_group_name  = "<your_log_group_name>"
-  destination_arn = "arn:aws:lambda:us-east-1:<account_id>:function:datadog-forwarder"
-  filter_pattern  = ""
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  metrics_collection_enabled  = "<string>"
 }
 ```
+For more info on `metrics_collection_enabled` please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/).<br>
+## <ins>Datadog resource collection.</ins>
+Datadog collects a standard set of resources from your AWS account.<br>
+By default `resource_collection_enabled` is `"true"`.<br>
+In order to change the default `resource_collection_enabled` add an attribute `resource_collection_enabled` with desired value.<br>
+```hcl
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  resource_collection_enabled = "<string>"
+}
+```
+For more info on `resource_collection_enabled` please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/).<br>
 
-# <ins>Important to know about Datadog</ins>
-## The Datadog agent is:<br>
-A lightweight software installed on applications hosts that helps push every log, event, trace, and metric produced by your applications and infrastructure using the Datadog APIs.<br>
-Must be integrated on infrastructure level for more info click [here](https://docs.datadoghq.com/integrations/ecs_fargate/?tab=fluentbitandfirelens).
+## <ins>Datadog excluded logs pattern.</ins>
+You can pass a specific logs pattern which you want to be excluded from forwarding.<br>
+By default `exclude_logs_pattern` is `"\"(START|END|REPORT) RequestId:\\s"` to exclude Lambda invocation logs<br>
+In order to change the default exclude logs pattern add an attribute `exclude_logs_pattern` with desired value.<br>
+For more info please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/).<br>
 
-## The Datadog tracer is:<br>
-Datadog Application Performance Monitoring (APM or tracing) is used to collect traces from your backend application code.<br>
-Must be integrated on application level for more info click [here](https://docs.datadoghq.com/tracing/setup_overview/).
+```hcl
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  exclude_logs_pattern        = "<string>"
+}
+```
+For more information about Datadog forwarder please visit [link](https://docs.datadoghq.com/logs/guide/forwarder/#log-filtering-optional).
+
+
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | 3.18.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_datadog"></a> [datadog](#provider\_datadog) | 3.18.0 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_cloudformation_stack.datadog_forwarder](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudformation_stack) | resource |
+| [aws_cloudwatch_log_subscription_filter.datadog_log_subscription_filter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_subscription_filter) | resource |
+| [aws_iam_policy.datadog_integration_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [aws_iam_role.datadog_integration_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy_attachment.datadog_policy_attach](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [datadog_integration_aws.integration](https://registry.terraform.io/providers/DataDog/datadog/3.18.0/docs/resources/integration_aws) | resource |
+| [datadog_integration_aws_lambda_arn.main_collector](https://registry.terraform.io/providers/DataDog/datadog/3.18.0/docs/resources/integration_aws_lambda_arn) | resource |
+| [datadog_integration_aws_log_collection.main](https://registry.terraform.io/providers/DataDog/datadog/3.18.0/docs/resources/integration_aws_log_collection) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_aws_regions"></a> [aws\_regions](#input\_aws\_regions) | An array of AWS regions to include for metrics collection. | `list` | <pre>[<br>  "us-east-1"<br>]</pre> | no |
+| <a name="input_cloudwatch_log_groups"></a> [cloudwatch\_log\_groups](#input\_cloudwatch\_log\_groups) | List of cloudwatch log groups. | `map(any)` | `{}` | no |
+| <a name="input_datadog_aws_account_id"></a> [datadog\_aws\_account\_id](#input\_datadog\_aws\_account\_id) | The AWS account ID Datadog's integration servers use for all integrations | `string` | `"464622532012"` | no |
+| <a name="input_datadog_cloudformation_template"></a> [datadog\_cloudformation\_template](#input\_datadog\_cloudformation\_template) | Official CloudFormation template provided by Datadog | `string` | `"https://datadog-cloudformation-template.s3.amazonaws.com/aws/forwarder/latest.yaml"` | no |
+| <a name="input_datadog_forwarder_function_name"></a> [datadog\_forwarder\_function\_name](#input\_datadog\_forwarder\_function\_name) | Datadog forwarder lambda function name | `string` | `"datadog-forwarder"` | no |
+| <a name="input_datadog_policy_name"></a> [datadog\_policy\_name](#input\_datadog\_policy\_name) | The set of permissions necessary to use all the integrations for individual AWS services. | `string` | `"DatadogAWSIntegrationPolicy"` | no |
+| <a name="input_datadog_role_name"></a> [datadog\_role\_name](#input\_datadog\_role\_name) | Enable Datadog to collect metrics, tags, CloudWatch events, and other data necessary to monitor your AWS environment. | `string` | `"DatadogAWSIntegrationRole"` | no |
+| <a name="input_dd_api_key"></a> [dd\_api\_key](#input\_dd\_api\_key) | The Datadog API key | `string` | n/a | yes |
+| <a name="input_dd_app_key"></a> [dd\_app\_key](#input\_dd\_app\_key) | The Datadog APP key | `string` | n/a | yes |
+| <a name="input_dd_site"></a> [dd\_site](#input\_dd\_site) | Datadog Site to send data to. | `string` | `"datadoghq.com"` | no |
+| <a name="input_dd_tags"></a> [dd\_tags](#input\_dd\_tags) | Add custom tags to forwarded logs, comma-delimited string, no trailing comma, e.g., env:prod,stack:classic | `string` | `""` | no |
+| <a name="input_exclude_logs_pattern"></a> [exclude\_logs\_pattern](#input\_exclude\_logs\_pattern) | This pattern will exclude lambda execution report only ERROR report will be forwarded. | `string` | `"\"(START\|END\|REPORT) RequestId:\s"` | no |
+| <a name="input_excluded_aws_regions"></a> [excluded\_aws\_regions](#input\_excluded\_aws\_regions) | An array of AWS regions to exclude from metrics collection. | `list` | <pre>[<br>  "us-east-2",<br>  "us-east-1",<br>  "us-west-1",<br>  "us-west-2",<br>  "af-south-1",<br>  "ap-east-1",<br>  "ap-south-2",<br>  "ap-southeast-3",<br>  "ap-south-1",<br>  "ap-northeast-3",<br>  "ap-northeast-2",<br>  "ap-southeast-1",<br>  "ap-southeast-2",<br>  "ap-northeast-1",<br>  "ca-central-1",<br>  "eu-central-1",<br>  "eu-west-1",<br>  "eu-west-2",<br>  "eu-south-1",<br>  "eu-west-3",<br>  "eu-south-2",<br>  "eu-north-1",<br>  "eu-central-2",<br>  "me-south-1",<br>  "me-central-1",<br>  "sa-east-1"<br>]</pre> | no |
+| <a name="input_log_collection_services"></a> [log\_collection\_services](#input\_log\_collection\_services) | A list of services which Datadog will automatically collect logs from. See the api docs (README.md) for more details on which services are supported. | `list` | `[]` | no |
+| <a name="input_metrics_collection_enabled"></a> [metrics\_collection\_enabled](#input\_metrics\_collection\_enabled) | Datadog collects metrics for this AWS account. | `string` | `"true"` | no |
+| <a name="input_resource_collection_enabled"></a> [resource\_collection\_enabled](#input\_resource\_collection\_enabled) | Datadog collects a standard set of resources from your AWS account. | `string` | `"true"` | no |
+
+## Outputs
+
+No outputs.
+
+## Authors
+
+Module is maintained by [Evgeny Gigi](https://github.com/evgenygigi).
