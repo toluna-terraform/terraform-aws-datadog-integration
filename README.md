@@ -20,7 +20,7 @@ By default this module will provision:
 4. Official datadog cloudformation stack that creates a lambda (by default pointed to datadoghq.com)
     which can forward logs to datadog portal.
 ```
-## AWS Regions.
+## <ins>AWS Regions.</ins>
 The regions of your AWS account.<br>
 By default `aws_regions` is `["us-east-1"]`.<br>
 All other regions are excluded by default.<br>
@@ -34,7 +34,7 @@ module "datadog" {
   aws_regions                 = ["<list of strings>"]
 }
 ```
-## Log groups.
+## <ins>Log groups.</ins>
 Log groups you want to be subscribed to datadog forwarder.<br>
 By default `cloudwatch_log_groups` is `{}`.<br>
 in order to change the default add an attribute `cloudwatch_log_groups` with desired value.<br>
@@ -51,7 +51,7 @@ module "datadog" {
   cloudwatch_log_groups       = {{map of maps}}
 }
 ```
-## Datadog site.
+## <ins>Datadog site.</ins>
 Datadog Site to send data to.<br>
 By default `dd_site` is `"datadoghq.com"`.<br>
 in order to change the default datadog site add an attribute `dd_site` with desired value.<br>
@@ -63,8 +63,8 @@ module "datadog" {
   dd_site                     = "<string>"
 }
 ```
-You can find here [link](https://docs.datadoghq.com/getting_started/site/) a list of datadog sites.
-## Datadog tags.
+You can find [here](https://docs.datadoghq.com/getting_started/site/) a list of datadog sites.
+## <ins>Datadog tags.</ins>
 Add custom tags to forwarded logs, comma-delimited string, no trailing comma, e.g., `"env:prod,stack:classic"`<br>
 By default `dd_tags` is empty<br>
 in order to change the default datadog tags add an attribute `dd_tags` with desired value.<br>
@@ -76,10 +76,12 @@ module "datadog" {
   dd_tags                     = "<string>"
 }
 ```
-Add custom tags to forwarded logs,
-comma-delimited string, no trailing comma, e.g., env:prod,stack:classic
+Add custom tags to forwarded logs,<br>
+comma-delimited string,<br>
+no trailing comma,<br>
+e.g., env:prod,stack:classic
 
-## Datadog log collection services.
+## <ins>Datadog log collection services.</ins>
 A list of services which Datadog will automatically collect logs from.<br>
 By default `log_collection_services` is empty<br>
 In order to change the default log collection services add an attribute `log_collection_services` with desired value.<br>
@@ -108,10 +110,39 @@ curl -X GET "https://api.datadoghq.com/api/v1/integration/aws/logs/services" \
 -H "DD-API-KEY: ${DD_API_KEY}" \
 -H "DD-APPLICATION-KEY: ${DD_APP_KEY}"
 ```
-## Datadog excluded logs pattern.
+## <ins>Datadog metrics collection.</ins>
+Datadog collects metrics for this AWS account.<br>
+By default `metrics_collection_enabled` is `"true"`.<br>
+In order to change the default `metrics_collection_enabled` add an attribute `metrics_collection_enabled` with desired value.<br>
+```hcl
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  metrics_collection_enabled  = "<string>"
+}
+```
+For more info on `metrics_collection_enabled` please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/).<br>
+## <ins>Datadog resource collection.</ins>
+Datadog collects a standard set of resources from your AWS account.<br>
+By default `resource_collection_enabled` is `"true"`.<br>
+In order to change the default `resource_collection_enabled` add an attribute `resource_collection_enabled` with desired value.<br>
+```hcl
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  resource_collection_enabled = "<string>"
+}
+```
+For more info on `resource_collection_enabled` please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/).<br>
+
+## <ins>Datadog excluded logs pattern.</ins>
 You can pass a specific logs pattern which you want to be excluded from forwarding.<br>
 By default `exclude_logs_pattern` is `"\"(START|END|REPORT) RequestId:\\s"` to exclude Lambda invocation logs<br>
 In order to change the default exclude logs pattern add an attribute `exclude_logs_pattern` with desired value.<br>
+For more info please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/).<br>
+
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
