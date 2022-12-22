@@ -6,6 +6,7 @@ Terraform module which creates Datadog integration on AWS.
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
 }
@@ -28,6 +29,7 @@ You can find a list of all excluded regions down below in README.md.<br>
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
   aws_regions                 = ["<list of strings>"]
@@ -45,6 +47,7 @@ Please see example in `examples/datadog-integration-with-log-groups` folder.<br>
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
   cloudwatch_log_groups       = {{map of maps}}
@@ -57,6 +60,7 @@ in order to change the default datadog site add an attribute `dd_site` with desi
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
   dd_site                     = "<string>"
@@ -88,6 +92,7 @@ In order to change the default log collection services add an attribute `log_col
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
   log_collection_services     = ["<list of strings>"]
@@ -117,6 +122,7 @@ In order to change the default `metrics_collection_enabled` add an attribute `me
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
   metrics_collection_enabled  = "<string>"
@@ -130,6 +136,7 @@ In order to change the default `resource_collection_enabled` add an attribute `r
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
   resource_collection_enabled = "<string>"
@@ -146,6 +153,7 @@ For more info please visit this [link](https://docs.datadoghq.com/api/latest/aws
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
   exclude_logs_pattern        = "<string>"
