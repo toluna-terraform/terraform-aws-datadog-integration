@@ -70,6 +70,7 @@ in order to change the default datadog tags add an attribute `dd_tags` with desi
 ```hcl
 module "datadog" {
   source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
   dd_tags                     = "<string>"
