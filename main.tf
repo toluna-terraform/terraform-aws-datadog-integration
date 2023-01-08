@@ -1,14 +1,12 @@
-# # Keeping the SecretManager option commented in case we will use it in the future.
-# # Store Datadog API key in AWS Secrets Manager
-# resource "aws_secretsmanager_secret" "dd_api_key" {
-#   name        = "/${data.aws_caller_identity.current.account_id}/datadog/api-key"
-#   description = "Encrypted Datadog API Key"
-# }
+resource "aws_secretsmanager_secret" "dd_api_key" {
+  name        = "datadog_api_key"
+  description = "Encrypted Datadog API Key"
+}
 
-# resource "aws_secretsmanager_secret_version" "dd_api_key" {
-#   secret_id     = aws_secretsmanager_secret.dd_api_key.id
-#   secret_string = "${var.dd_api_key}"
-# }
+resource "aws_secretsmanager_secret_version" "dd_api_key" {
+  secret_id     = aws_secretsmanager_secret.dd_api_key.id
+  secret_string = var.dd_api_key
+}
 
 # Datadog Forwarder to ship logs from S3 and CloudWatch, as well as observability data from Lambda functions to Datadog.
 # https://github.com/DataDog/datadog-serverless-functions/tree/master/aws/logs_monitoring
@@ -17,20 +15,14 @@ resource "aws_cloudformation_stack" "datadog_forwarder" {
   name         = var.datadog_forwarder_function_name
   capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM", "CAPABILITY_AUTO_EXPAND"]
   parameters   = {
-    # Keeping the SecretManager option commented in case we will use it in the future.
-    # DdApiKeySecretArn   = aws_secretsmanager_secret.dd_api_key.arn,
+    DdApiKeySecretArn   = aws_secretsmanager_secret.dd_api_key.arn,
     DdSite              = var.dd_site,
     DdTags              = var.dd_tags,
-    DdApiKey            = var.dd_api_key
+    #DdApiKey            = var.dd_api_key
     FunctionName        = var.datadog_forwarder_function_name
     ExcludeAtMatch      = var.exclude_logs_pattern
     }
     template_url = var.datadog_cloudformation_template
-    lifecycle {
-      ignore_changes = [
-        parameters["DdApiKey"]
-      ]
-    }
 }
 
 resource "aws_iam_role" "datadog_integration_role" {
