@@ -75,7 +75,6 @@ variable "log_collection_services" {
 }
 
 variable "cloudwatch_log_groups" {
-  type = map(any)
   default = {}
   description = "List of cloudwatch log groups."
 }
@@ -115,4 +114,14 @@ variable "aws_regions" {
   type        = list
   default     = ["us-east-1"]
   description = "An array of AWS regions to include for metrics collection."
+}
+
+variable "datadog_forwatder_aws_region" {
+  type        = string
+  default     = "us-east-1"
+  description = "A region on which datadog forwarder is deployed."
+}
+
+variable "create_datadog_forwarder" {
+  default = true
 }

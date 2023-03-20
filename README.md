@@ -20,8 +20,25 @@ By default this module will provision:
 4. Official datadog cloudformation stack that creates a lambda (by default pointed to datadoghq.com)
     which can forward logs to datadog portal.
 
+## <ins>Create Datadog forwarder<ins>.
+By default `create_datadog_forwarder` is `true`.<br>
+In case you have <ins>multiple projects on the same account</ins> with different state files,<br>
+You should keep `create_datadog_forwarder` disabled `false` and all projects besides one that you choose as your `main`.<br>
+This done to avoid errors of `resource X already exist` when other project will try to create additional forwarder.<br>
+In that case you will still be able to subscribe to forwarder by passing `cloudwatch_log_groups`.<br>
+in order to change the default add an attribute `create_datadog_forwarder` with desired value.<br>
+```hcl
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  create_datadog_forwarder    = false
+}
+```
+
 ## <ins>AWS Regions<ins>.
-The regions of your AWS account.<br>
+The regions of your AWS account for `datadog_integration_aws`.<br>
 By default `aws_regions` is `["us-east-1"]`.<br>
 All other regions are excluded by default.<br>
 in order to change the default add an attribute `aws_regions` with desired value.<br>
@@ -35,13 +52,27 @@ module "datadog" {
   aws_regions                 = ["<list of strings>"]
 }
 ```
+## <ins>Datadog forwarder AWS Region<ins>.
+The region of your AWS account on which Datadog forwarde is installed.<br>
+By default `datadog_farwarder_aws_region` is `us-east-1`.<br>
+in order to change the default add an attribute `datadog_farwarder_aws_region` with desired value.<br>
+```hcl
+module "datadog" {
+  source                       = "toluna-terraform/datadog-integration/aws"
+  version                      = "~>2.0.0"
+  dd_api_key                   = "<string>"
+  dd_app_key                   = "<string>"
+  datadog_farwarder_aws_region = "<string>"
+}
+```
+
 ## <ins>Log groups.</ins>
 Log groups you want to be subscribed to datadog forwarder.<br>
 By default `cloudwatch_log_groups` is `{}`.<br>
 in order to change the default add an attribute `cloudwatch_log_groups` with desired value.<br>
-The value should be a map of maps where each is identified by a string label and have a key `name` with the value of a log group name.<br>
+The value should be a list where each element is a string of log group name.
 ```hcl
-{log_group1={name="/aws/lambda/log_group1"},log_group2={name="/aws/ecs/log_group2"}}
+["/aws/lambda/log_group1","/aws/ecs/log_group2"]
 ```
 Please see example in `examples/datadog-integration-with-log-groups` folder.<br>
 ```hcl
@@ -50,7 +81,7 @@ module "datadog" {
   version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
-  cloudwatch_log_groups       = {{map of maps}}
+  cloudwatch_log_groups       = ["<list of strings>"]
 }
 ```
 ## <ins>Datadog site.</ins>
