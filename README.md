@@ -53,7 +53,7 @@ module "datadog" {
 }
 ```
 ## <ins>Datadog forwarder AWS Region<ins>.
-The region of your AWS account on which Datadog forwarde is installed.<br>
+The region of your AWS account on which Datadog forwarder will be installed.<br>
 By default `datadog_farwarder_aws_region` is `us-east-1`.<br>
 in order to change the default add an attribute `datadog_farwarder_aws_region` with desired value.<br>
 ```hcl
@@ -72,7 +72,7 @@ By default `cloudwatch_log_groups` is `{}`.<br>
 in order to change the default add an attribute `cloudwatch_log_groups` with desired value.<br>
 The value should be a list where each element is a string of log group name.
 ```hcl
-["/aws/lambda/log_group1","/aws/ecs/log_group2"]
+toset(["/aws/lambda/log_group1","/aws/ecs/log_group2"])
 ```
 Please see example in `examples/datadog-integration-with-log-groups` folder.<br>
 ```hcl
@@ -81,7 +81,7 @@ module "datadog" {
   version                     = "~>2.0.0"
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
-  cloudwatch_log_groups       = ["<list of strings>"]
+  cloudwatch_log_groups       = toset(["<list of strings>"])
 }
 ```
 ## <ins>Datadog site.</ins>

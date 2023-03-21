@@ -104,10 +104,9 @@ resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filt
   for_each        = var.cloudwatch_log_groups
   filter_pattern  = ""
   log_group_name  = "${each.key}"
-  destination_arn = "arn:aws:lambda:${var.datadog_forwatder_aws_region}:${data.aws_caller_identity.current.account_id}:function:datadog-forwarder"
+  destination_arn = "arn:aws:lambda:${var.datadog_forwarder_aws_region}:${data.aws_caller_identity.current.account_id}:function:datadog-forwarder"
 
   depends_on = [
     aws_cloudformation_stack.datadog_forwarder
   ]
-  # Not using aws_cloudformation_stack.datadog_forwarder.outputs.DatadogForwarderArn as destination_arn to support usage on multiple projects.
 }

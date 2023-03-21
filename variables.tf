@@ -116,7 +116,7 @@ variable "aws_regions" {
   description = "An array of AWS regions to include for metrics collection."
 }
 
-variable "datadog_forwatder_aws_region" {
+variable "datadog_forwarder_aws_region" {
   type        = string
   default     = "us-east-1"
   description = "A region on which datadog forwarder is deployed."
