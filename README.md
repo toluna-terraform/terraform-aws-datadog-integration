@@ -162,7 +162,7 @@ module "datadog" {
 For more info on `metrics_collection_enabled` please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/).<br>
 ## <ins>Datadog resource collection.</ins>
 Datadog collects a standard set of resources from your AWS account.<br>
-By default `resource_collection_enabled` is `"true"`.<br>
+By default `resource_collection_enabled` is `"false"`.<br>
 In order to change the default `resource_collection_enabled` add an attribute `resource_collection_enabled` with desired value.<br>
 ```hcl
 module "datadog" {

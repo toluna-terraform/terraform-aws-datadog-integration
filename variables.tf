@@ -58,7 +58,7 @@ variable "metrics_collection_enabled" {
 
 variable "resource_collection_enabled" {
   type        = string
-  default     = "true"
+  default     = "false"
   description = "Datadog collects a standard set of resources from your AWS account."
 }
 
