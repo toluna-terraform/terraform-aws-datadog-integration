@@ -64,8 +64,8 @@ variable "resource_collection_enabled" {
 
 variable "exclude_logs_pattern" {
   type        = string
-  default     = "\"(START|END|REPORT) RequestId:\\s"
-  description = "This pattern will exclude lambda execution report only ERROR report will be forwarded."
+  default     = "\"(START|END|REPORT) RequestId:\\s || \"(EXTENSION|TELEMETRY) Name:\\s"
+  description = "This pattern will exclude lambda execution report only ERROR report will be forwarded. By default forwarder will exclude reports of Agent and Tracer"
 }
 
 variable "log_collection_services" {
