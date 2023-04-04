@@ -177,7 +177,7 @@ For more info on `resource_collection_enabled` please visit this [link](https://
 
 ## <ins>Datadog excluded logs pattern.</ins>
 You can pass a specific logs pattern which you want to be excluded from forwarding.<br>
-By default `exclude_logs_pattern` is `"\"(START|END|REPORT) RequestId:\\s"` to exclude Lambda invocation logs<br>
+By default `exclude_logs_pattern` is `"\"(START|END|REPORT) RequestId:\\s || \"(EXTENSION|TELEMETRY) Name:\\s"` to exclude Lambda invocation logs and datadog-agent status logs<br>
 In order to change the default exclude logs pattern add an attribute `exclude_logs_pattern` with desired value.<br>
 For more info please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/).<br>
 
@@ -192,19 +192,18 @@ module "datadog" {
 ```
 For more information about Datadog forwarder please visit [link](https://docs.datadoghq.com/logs/guide/forwarder/#log-filtering-optional).
 
-
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | 3.18.0 |
+| <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | 3.22.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_datadog"></a> [datadog](#provider\_datadog) | 3.18.0 |
+| <a name="provider_datadog"></a> [datadog](#provider\_datadog) | 3.22.0 |
 
 ## Modules
 
@@ -219,9 +218,11 @@ No modules.
 | [aws_iam_policy.datadog_integration_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.datadog_integration_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy_attachment.datadog_policy_attach](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [datadog_integration_aws.integration](https://registry.terraform.io/providers/DataDog/datadog/3.18.0/docs/resources/integration_aws) | resource |
-| [datadog_integration_aws_lambda_arn.main_collector](https://registry.terraform.io/providers/DataDog/datadog/3.18.0/docs/resources/integration_aws_lambda_arn) | resource |
-| [datadog_integration_aws_log_collection.main](https://registry.terraform.io/providers/DataDog/datadog/3.18.0/docs/resources/integration_aws_log_collection) | resource |
+| [aws_secretsmanager_secret.dd_api_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret) | resource |
+| [aws_secretsmanager_secret_version.dd_api_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version) | resource |
+| [datadog_integration_aws.integration](https://registry.terraform.io/providers/DataDog/datadog/3.22.0/docs/resources/integration_aws) | resource |
+| [datadog_integration_aws_lambda_arn.main_collector](https://registry.terraform.io/providers/DataDog/datadog/3.22.0/docs/resources/integration_aws_lambda_arn) | resource |
+| [datadog_integration_aws_log_collection.main](https://registry.terraform.io/providers/DataDog/datadog/3.22.0/docs/resources/integration_aws_log_collection) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 
 ## Inputs
@@ -229,9 +230,11 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_regions"></a> [aws\_regions](#input\_aws\_regions) | An array of AWS regions to include for metrics collection. | `list` | <pre>[<br>  "us-east-1"<br>]</pre> | no |
-| <a name="input_cloudwatch_log_groups"></a> [cloudwatch\_log\_groups](#input\_cloudwatch\_log\_groups) | List of cloudwatch log groups. | `map(any)` | `{}` | no |
+| <a name="input_cloudwatch_log_groups"></a> [cloudwatch\_log\_groups](#input\_cloudwatch\_log\_groups) | List of cloudwatch log groups. | `map` | `{}` | no |
+| <a name="input_create_datadog_forwarder"></a> [create\_datadog\_forwarder](#input\_create\_datadog\_forwarder) | n/a | `bool` | `true` | no |
 | <a name="input_datadog_aws_account_id"></a> [datadog\_aws\_account\_id](#input\_datadog\_aws\_account\_id) | The AWS account ID Datadog's integration servers use for all integrations | `string` | `"464622532012"` | no |
 | <a name="input_datadog_cloudformation_template"></a> [datadog\_cloudformation\_template](#input\_datadog\_cloudformation\_template) | Official CloudFormation template provided by Datadog | `string` | `"https://datadog-cloudformation-template.s3.amazonaws.com/aws/forwarder/latest.yaml"` | no |
+| <a name="input_datadog_forwarder_aws_region"></a> [datadog\_forwarder\_aws\_region](#input\_datadog\_forwarder\_aws\_region) | A region on which datadog forwarder is deployed. | `string` | `"us-east-1"` | no |
 | <a name="input_datadog_forwarder_function_name"></a> [datadog\_forwarder\_function\_name](#input\_datadog\_forwarder\_function\_name) | Datadog forwarder lambda function name | `string` | `"datadog-forwarder"` | no |
 | <a name="input_datadog_policy_name"></a> [datadog\_policy\_name](#input\_datadog\_policy\_name) | The set of permissions necessary to use all the integrations for individual AWS services. | `string` | `"DatadogAWSIntegrationPolicy"` | no |
 | <a name="input_datadog_role_name"></a> [datadog\_role\_name](#input\_datadog\_role\_name) | Enable Datadog to collect metrics, tags, CloudWatch events, and other data necessary to monitor your AWS environment. | `string` | `"DatadogAWSIntegrationRole"` | no |
@@ -239,11 +242,11 @@ No modules.
 | <a name="input_dd_app_key"></a> [dd\_app\_key](#input\_dd\_app\_key) | The Datadog APP key | `string` | n/a | yes |
 | <a name="input_dd_site"></a> [dd\_site](#input\_dd\_site) | Datadog Site to send data to. | `string` | `"datadoghq.com"` | no |
 | <a name="input_dd_tags"></a> [dd\_tags](#input\_dd\_tags) | Add custom tags to forwarded logs, comma-delimited string, no trailing comma, e.g., env:prod,stack:classic | `string` | `""` | no |
-| <a name="input_exclude_logs_pattern"></a> [exclude\_logs\_pattern](#input\_exclude\_logs\_pattern) | This pattern will exclude lambda execution report only ERROR report will be forwarded. | `string` | `"\"(START\|END\|REPORT) RequestId:\s"` | no |
+| <a name="input_exclude_logs_pattern"></a> [exclude\_logs\_pattern](#input\_exclude\_logs\_pattern) | This pattern will exclude lambda execution report only ERROR report will be forwarded. By default forwarder will exclude reports of Agent and Tracer | `string` | `"\"(START|END|REPORT) RequestId:\\s || \"(EXTENSION|TELEMETRY) Name:\\s"` | no |
 | <a name="input_excluded_aws_regions"></a> [excluded\_aws\_regions](#input\_excluded\_aws\_regions) | An array of AWS regions to exclude from metrics collection. | `list` | <pre>[<br>  "us-east-2",<br>  "us-east-1",<br>  "us-west-1",<br>  "us-west-2",<br>  "af-south-1",<br>  "ap-east-1",<br>  "ap-south-2",<br>  "ap-southeast-3",<br>  "ap-south-1",<br>  "ap-northeast-3",<br>  "ap-northeast-2",<br>  "ap-southeast-1",<br>  "ap-southeast-2",<br>  "ap-northeast-1",<br>  "ca-central-1",<br>  "eu-central-1",<br>  "eu-west-1",<br>  "eu-west-2",<br>  "eu-south-1",<br>  "eu-west-3",<br>  "eu-south-2",<br>  "eu-north-1",<br>  "eu-central-2",<br>  "me-south-1",<br>  "me-central-1",<br>  "sa-east-1"<br>]</pre> | no |
 | <a name="input_log_collection_services"></a> [log\_collection\_services](#input\_log\_collection\_services) | A list of services which Datadog will automatically collect logs from. See the api docs (README.md) for more details on which services are supported. | `list` | `[]` | no |
 | <a name="input_metrics_collection_enabled"></a> [metrics\_collection\_enabled](#input\_metrics\_collection\_enabled) | Datadog collects metrics for this AWS account. | `string` | `"true"` | no |
-| <a name="input_resource_collection_enabled"></a> [resource\_collection\_enabled](#input\_resource\_collection\_enabled) | Datadog collects a standard set of resources from your AWS account. | `string` | `"true"` | no |
+| <a name="input_resource_collection_enabled"></a> [resource\_collection\_enabled](#input\_resource\_collection\_enabled) | Datadog collects a standard set of resources from your AWS account. | `string` | `"false"` | no |
 
 ## Outputs
 
