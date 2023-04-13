@@ -74,9 +74,15 @@ variable "log_collection_services" {
   description = "A list of services which Datadog will automatically collect logs from. See the api docs (README.md) for more details on which services are supported."
 }
 
-variable "cloudwatch_log_groups" {
+variable "cloudwatch_log_groups_as_list" {
   default = {}
-  description = "List of cloudwatch log groups."
+  description = "List of cloudwatch log groups as list."
+}
+
+variable "cloudwatch_log_groups" {
+  type = map(any)
+  default = {}
+  description = "List of cloudwatch log groups as map."
 }
 
 variable "excluded_aws_regions" {

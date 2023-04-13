@@ -100,8 +100,21 @@ resource "datadog_integration_aws_log_collection" "main" {
 
 # Subscribe to datadog-forwarder.
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter" {
-  name            = "${each.key}"
+  name            = "${each.value.name}"
   for_each        = var.cloudwatch_log_groups
+  filter_pattern  = ""
+  log_group_name  = "${each.value.name}"
+  destination_arn = "arn:aws:lambda:${var.datadog_forwarder_aws_region}:${data.aws_caller_identity.current.account_id}:function:datadog-forwarder"
+
+  depends_on = [
+    aws_cloudformation_stack.datadog_forwarder
+  ]
+}
+
+# Subscribe to datadog-forwarder for list.
+resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter_for_list" {
+  name            = "${each.key}"
+  for_each        = var.cloudwatch_log_groups_as_list
   filter_pattern  = ""
   log_group_name  = "${each.key}"
   destination_arn = "arn:aws:lambda:${var.datadog_forwarder_aws_region}:${data.aws_caller_identity.current.account_id}:function:datadog-forwarder"
