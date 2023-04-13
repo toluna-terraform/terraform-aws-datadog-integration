@@ -66,7 +66,7 @@ module "datadog" {
 }
 ```
 
-## <ins>Log groups.</ins>
+## <ins>Log groups as list.</ins>
 Log groups you want to be subscribed to datadog forwarder.<br>
 By default `cloudwatch_log_groups` is `{}`.<br>
 in order to change the default add an attribute `cloudwatch_log_groups` with desired value.<br>
@@ -82,6 +82,24 @@ module "datadog" {
   dd_api_key                  = "<string>"
   dd_app_key                  = "<string>"
   cloudwatch_log_groups       = toset(["<list of strings>"])
+}
+```
+## <ins>Log groups as map.</ins>
+Log groups you want to be subscribed to datadog forwarder.<br>
+By default `cloudwatch_log_groups_as_list` is `{}`.<br>
+in order to change the default add an attribute `cloudwatch_log_groups_as_list` with desired value.<br>
+The value should be a map of maps where each is identified by a string label and have a key `name` with the value of a log group name.<br>
+```hcl
+{log_group1={name="/aws/lambda/log_group1"},log_group2={name="/aws/ecs/log_group2"}}
+```
+Please see example in `examples/datadog-integration-with-log-groups` folder.<br>
+```hcl
+module "datadog" {
+  source                        = "toluna-terraform/datadog-integration/aws"
+  version                       = "~>2.0.0"
+  dd_api_key                    = "<string>"
+  dd_app_key                    = "<string>"
+  cloudwatch_log_groups_as_list = {{map of maps}}
 }
 ```
 ## <ins>Datadog site.</ins>
