@@ -147,26 +147,11 @@ module "datadog" {
   log_collection_services     = ["<list of strings>"]
 }
 ```
-A list of services to collect logs from :<br>
-```json[{"id":"apigw-access-logs","label":"API Gateway Access Logs"},
-{"id":"apigw-execution-logs","label":"API Gateway Execution Logs"},
-{"id":"elbv2","label":"Application ELB Access Logs"},
-{"id":"elb","label":"Classic ELB Access Logs"},
-{"id":"cloudfront","label":"CloudFront Access Logs"},
-{"id":"lambda","label":"Lambda Cloudwatch Logs"},
-{"id":"redshift","label":"Redshift Logs"},
-{"id":"s3","label":"S3 Access Logs"}]
-```
-* You can also see the supported services by running the following command:<br>
-```
-curl -X GET "https://api.datadoghq.com/api/v1/integration/aws/logs/services" \
--H "Content-Type: application/json" \
--H "DD-API-KEY: ${DD_API_KEY}" \
--H "DD-APPLICATION-KEY: ${DD_APP_KEY}"
-```
+For more info on `log_collection_services` please visit this [link](https://docs.datadoghq.com/api/latest/aws-logs-integration/#list-all-aws-logs-integrations).<br>
 ## <ins>Datadog metrics collection.</ins>
-Datadog collects metrics for this AWS account.<br>
+Provides to Datadog the ability to collect metrics for your AWS account.<br>
 By default `metrics_collection_enabled` is `"true"`.<br>
+But by default we decided to disable all metrics and enable only the provided via `metrics_to_collect` parameter.<br>
 In order to change the default `metrics_collection_enabled` add an attribute `metrics_collection_enabled` with desired value.<br>
 ```hcl
 module "datadog" {
@@ -178,6 +163,20 @@ module "datadog" {
 }
 ```
 For more info on `metrics_collection_enabled` please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/).<br>
+## <ins>Datadog metrics to collect.</ins>
+A list of specific metrics which we want Datadog to collect.<br>
+By default `metrics_to_collect` is `["lambda"]`.<br>
+In order to change the default `metrics_to_collect` add an attribute `metrics_to_collect` with desired value.<br>
+```hcl
+module "datadog" {
+  source                      = "toluna-terraform/datadog-integration/aws"
+  version                     = "~>2.0.0"
+  dd_api_key                  = "<string>"
+  dd_app_key                  = "<string>"
+  metrics_to_collect           = ["<list of strings>"]
+}
+```
+For more info on available metrics to collect please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/#list-namespace-rules).<br>
 ## <ins>Datadog resource collection.</ins>
 Datadog collects a standard set of resources from your AWS account.<br>
 By default `resource_collection_enabled` is `"false"`.<br>
@@ -195,7 +194,8 @@ For more info on `resource_collection_enabled` please visit this [link](https://
 
 ## <ins>Datadog excluded logs pattern.</ins>
 You can pass a specific logs pattern which you want to be excluded from forwarding.<br>
-By default `exclude_logs_pattern` is `"\"(START|END|REPORT) RequestId:\\s || \"(EXTENSION|TELEMETRY) Name:\\s"` to exclude Lambda invocation logs and datadog-agent status logs<br>
+By default `exclude_logs_pattern` is `"\"(START|END|REPORT) RequestId:\\s || \"(EXTENSION|TELEMETRY) Name:\\s"`<br>
+to exclude Lambda invocation logs and datadog-agent status logs<br>
 In order to change the default exclude logs pattern add an attribute `exclude_logs_pattern` with desired value.<br>
 For more info please visit this [link](https://docs.datadoghq.com/api/latest/aws-integration/).<br>
 

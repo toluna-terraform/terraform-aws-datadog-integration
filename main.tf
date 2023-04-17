@@ -78,7 +78,7 @@ resource "datadog_integration_aws" "integration" {
   excluded_regions                 = setsubtract(data.aws_regions.all_aws_regions.names, var.aws_regions)
   metrics_collection_enabled       = var.metrics_collection_enabled
   resource_collection_enabled      = var.resource_collection_enabled
-  account_specific_namespace_rules = { for metric in (setsubtract(jsondecode(data.http.get_available_namespace_rules.response_body), var.metrics_to_enable)): metric => false }
+  account_specific_namespace_rules = { for metric in (setsubtract(jsondecode(data.http.get_available_metric_rules.response_body), var.metrics_to_collect)): metric => false }
 }
 
 # Create a new Datadog - Amazon Web Services integration Lambda ARN.

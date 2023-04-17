@@ -6,7 +6,7 @@ data "aws_regions" "all_aws_regions" {
 }
 
 # An array of metrics which Datadog collects from your AWS account.
-data "http" "get_available_namespace_rules" {
+data "http" "get_available_metric_rules" {
   # https://docs.datadoghq.com/api/latest/aws-integration/#list-namespace-rules
   url    = "https://api.datadoghq.com/api/v1/integration/aws/available_namespace_rules"
   method = "GET"

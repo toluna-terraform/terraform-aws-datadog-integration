@@ -85,7 +85,7 @@ variable "cloudwatch_log_groups" {
   description = "List of cloudwatch log groups as map."
 }
 
-variable "metrics_to_enable" {
+variable "metrics_to_collect" {
   type        = list
   default     = ["lambda"]
   description = "An array of metrics which Datadog collects from your AWS account."
