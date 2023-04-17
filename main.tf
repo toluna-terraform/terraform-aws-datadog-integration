@@ -75,10 +75,10 @@ resource "datadog_integration_aws" "integration" {
   count                            = "${var.create_datadog_forwarder == true ? 1 : 0}"
   account_id                       = data.aws_caller_identity.current.account_id
   role_name                        = var.datadog_role_name
-  excluded_regions                 = setsubtract(var.excluded_aws_regions, var.aws_regions)
+  excluded_regions                 = setsubtract(data.aws_regions.all_aws_regions.names, var.aws_regions)
   metrics_collection_enabled       = var.metrics_collection_enabled
   resource_collection_enabled      = var.resource_collection_enabled
-  account_specific_namespace_rules = {}
+  account_specific_namespace_rules = { for metric in (setsubtract(jsondecode(data.http.get_available_namespace_rules.response_body), var.metrics_to_enable)): metric => false }
 }
 
 # Create a new Datadog - Amazon Web Services integration Lambda ARN.
