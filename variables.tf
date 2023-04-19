@@ -58,14 +58,14 @@ variable "metrics_collection_enabled" {
 
 variable "resource_collection_enabled" {
   type        = string
-  default     = "true"
+  default     = "false"
   description = "Datadog collects a standard set of resources from your AWS account."
 }
 
 variable "exclude_logs_pattern" {
   type        = string
-  default     = "\"(START|END|REPORT) RequestId:\\s"
-  description = "This pattern will exclude lambda execution report only ERROR report will be forwarded."
+  default     = "\"(START|END|REPORT) RequestId:\\s || \"(EXTENSION|TELEMETRY) Name:\\s"
+  description = "This pattern will exclude lambda execution report only ERROR report will be forwarded. By default forwarder will exclude reports of Agent and Tracer"
 }
 
 variable "log_collection_services" {
@@ -74,45 +74,35 @@ variable "log_collection_services" {
   description = "A list of services which Datadog will automatically collect logs from. See the api docs (README.md) for more details on which services are supported."
 }
 
+variable "cloudwatch_log_groups_as_list" {
+  default = {}
+  description = "List of cloudwatch log groups as list."
+}
+
 variable "cloudwatch_log_groups" {
   type = map(any)
   default = {}
-  description = "List of cloudwatch log groups."
+  description = "List of cloudwatch log groups as map."
 }
 
-variable "excluded_aws_regions" {
-  type    = list
-  default = ["us-east-2",
-            "us-east-1",
-            "us-west-1",
-            "us-west-2",
-            "af-south-1",
-            "ap-east-1",
-            "ap-south-2",
-            "ap-southeast-3",
-            "ap-south-1",
-            "ap-northeast-3",
-            "ap-northeast-2",
-            "ap-southeast-1",
-            "ap-southeast-2",
-            "ap-northeast-1",
-            "ca-central-1",
-            "eu-central-1",
-            "eu-west-1",
-            "eu-west-2",
-            "eu-south-1",
-            "eu-west-3",
-            "eu-south-2",
-            "eu-north-1",
-            "eu-central-2",
-            "me-south-1",
-            "me-central-1",
-            "sa-east-1"]
-  description = "An array of AWS regions to exclude from metrics collection."
+variable "metrics_to_collect" {
+  type        = list
+  default     = ["lambda"]
+  description = "An array of metrics which Datadog collects from your AWS account."
 }
 
 variable "aws_regions" {
   type        = list
   default     = ["us-east-1"]
   description = "An array of AWS regions to include for metrics collection."
+}
+
+variable "datadog_forwarder_aws_region" {
+  type        = string
+  default     = "us-east-1"
+  description = "A region on which datadog forwarder is deployed."
+}
+
+variable "create_datadog_forwarder" {
+  default = true
 }
