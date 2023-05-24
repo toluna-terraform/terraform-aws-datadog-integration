@@ -80,7 +80,6 @@ variable "cloudwatch_log_groups_as_list" {
 }
 
 variable "cloudwatch_log_groups" {
-  type = map(any)
   default = {}
   description = "List of cloudwatch log groups as map."
 }
