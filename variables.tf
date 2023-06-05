@@ -75,12 +75,12 @@ variable "log_collection_services" {
 }
 
 variable "cloudwatch_log_groups_as_list" {
-  default = {}
+  default     = {}
   description = "List of cloudwatch log groups as list."
 }
 
 variable "cloudwatch_log_groups" {
-  default = {}
+  default     = {}
   description = "List of cloudwatch log groups as map."
 }
 

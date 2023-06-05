@@ -13,8 +13,8 @@ data "http" "get_available_metric_rules" {
 
   # Optional request headers
   request_headers = {
-    Accept = "application/json"
-    DD-API-KEY = var.dd_api_key
+    Accept             = "application/json"
+    DD-API-KEY         = var.dd_api_key
     DD-APPLICATION-KEY = var.dd_app_key
   }
 }
