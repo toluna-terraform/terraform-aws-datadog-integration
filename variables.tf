@@ -1,3 +1,6 @@
+variable "datadog_config" {
+}
+
 variable "datadog_aws_account_id" {
   type        = string
   default     = "464622532012"

@@ -1,3 +1,8 @@
+locals {
+  datadog_api_key = var.datadog_api_key == null ? var.datadog_config.datadog_api_key : var.datadog_api_key
+  datadog_app_key = var.datadog_app_key == null ? var.datadog_config.datadog_app_key : var.datadog_app_key
+}
+  
 resource "aws_secretsmanager_secret" "dd_api_key" {
   count                   = "${var.create_datadog_forwarder == true ? 1 : 0}"
   name                    = "datadog_api_key"
