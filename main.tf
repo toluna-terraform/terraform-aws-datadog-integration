@@ -1,6 +1,6 @@
 locals {
-  datadog_api_key = var.datadog_api_key == null ? var.datadog_config.datadog_api_key : var.datadog_api_key
-  datadog_app_key = var.datadog_app_key == null ? var.datadog_config.datadog_app_key : var.datadog_app_key
+  dd_api_key = var.dd_api_key == null ? var.datadog_config.datadog_api_key : var.dd_api_key
+  dd_app_key = var.dd_app_key == null ? var.datadog_config.datadog_app_key : var.dd_app_key
 }
   
 resource "aws_secretsmanager_secret" "dd_api_key" {
